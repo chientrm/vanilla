@@ -4,13 +4,9 @@ obj/*.o
 # Ignore binary files
 bin/*
 
-# Ignore image output files
-images/*.ppm
-
 # Ignore build directories
 bin/
 obj/
-images/
 
 # Ignore editor specific files
 .vscode/
