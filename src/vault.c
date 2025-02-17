@@ -13,14 +13,14 @@ typedef struct {
 
 MajorVaultProtein mvp = {
     {
-        { -0.5f, -0.5f, -0.5f }, {  0.5f, -0.5f, -0.5f },
-        {  0.5f,  0.5f, -0.5f }, { -0.5f,  0.5f, -0.5f },
-        { -0.5f, -0.5f,  0.5f }, {  0.5f, -0.5f,  0.5f },
-        {  0.5f,  0.5f,  0.5f }, { -0.5f,  0.5f,  0.5f },
-        { -0.25f, -0.25f, -0.25f }, {  0.25f, -0.25f, -0.25f },
-        {  0.25f,  0.25f, -0.25f }, { -0.25f,  0.25f, -0.25f },
-        { -0.25f, -0.25f,  0.25f }, {  0.25f, -0.25f,  0.25f },
-        {  0.25f,  0.25f,  0.25f }, { -0.25f,  0.25f,  0.25f }
+        { -0.05f, -0.05f, -0.05f }, {  0.05f, -0.05f, -0.05f },
+        {  0.05f,  0.05f, -0.05f }, { -0.05f,  0.05f, -0.05f },
+        { -0.05f, -0.05f,  0.05f }, {  0.05f, -0.05f,  0.05f },
+        {  0.05f,  0.05f,  0.05f }, { -0.05f,  0.05f,  0.05f },
+        { -0.025f, -0.025f, -0.025f }, {  0.025f, -0.025f, -0.025f },
+        {  0.025f,  0.025f, -0.025f }, { -0.025f,  0.025f, -0.025f },
+        { -0.025f, -0.025f,  0.025f }, {  0.025f, -0.025f,  0.025f },
+        {  0.025f,  0.025f,  0.025f }, { -0.025f,  0.025f,  0.025f }
     },
     {
         { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 },
@@ -37,23 +37,49 @@ void initGL() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
-    GLfloat lightPos[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // Directional light
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+    GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f }; // Ambient light
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 }
 
 void drawMVP() {
-    glBegin(GL_LINES);
-    for (int i = 0; i < 24; i++) {
-        glVertex3fv(mvp.vertices[mvp.edges[i][0]]);
-        glVertex3fv(mvp.vertices[mvp.edges[i][1]]);
-    }
+    glBegin(GL_QUADS);
+    // Front face
+    glVertex3fv(mvp.vertices[0]);
+    glVertex3fv(mvp.vertices[1]);
+    glVertex3fv(mvp.vertices[2]);
+    glVertex3fv(mvp.vertices[3]);
+    // Back face
+    glVertex3fv(mvp.vertices[4]);
+    glVertex3fv(mvp.vertices[5]);
+    glVertex3fv(mvp.vertices[6]);
+    glVertex3fv(mvp.vertices[7]);
+    // Left face
+    glVertex3fv(mvp.vertices[0]);
+    glVertex3fv(mvp.vertices[3]);
+    glVertex3fv(mvp.vertices[7]);
+    glVertex3fv(mvp.vertices[4]);
+    // Right face
+    glVertex3fv(mvp.vertices[1]);
+    glVertex3fv(mvp.vertices[2]);
+    glVertex3fv(mvp.vertices[6]);
+    glVertex3fv(mvp.vertices[5]);
+    // Top face
+    glVertex3fv(mvp.vertices[3]);
+    glVertex3fv(mvp.vertices[2]);
+    glVertex3fv(mvp.vertices[6]);
+    glVertex3fv(mvp.vertices[7]);
+    // Bottom face
+    glVertex3fv(mvp.vertices[0]);
+    glVertex3fv(mvp.vertices[1]);
+    glVertex3fv(mvp.vertices[5]);
+    glVertex3fv(mvp.vertices[4]);
     glEnd();
 }
 
 void drawVaultCell() {
     for (int j = 0; j < 8; j++) {
         glPushMatrix();
-        glTranslatef(0.0f, j * 0.5f, 0.0f); // Stack rings on top of each other
+        glTranslatef(0.0f, j * 0.1f, 0.0f); // Stack rings neatly together
         for (int i = 0; i < 360; i += (360 / 39)) {
             glPushMatrix();
             glRotatef(i, 0.0f, 1.0f, 0.0f);
