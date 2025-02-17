@@ -2,58 +2,29 @@
 
 float angleX = 0.0f;
 float angleY = 0.0f;
+float zoom = -5.0f;
 int lastMouseX, lastMouseY;
 int isDragging = 0;
 
 void initGL() {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    GLfloat lightPos[] = { 1.0f, 1.0f, 1.0f, 0.0f }; // Directional light
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 }
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -5.0f);
+    glTranslatef(0.0f, 0.0f, zoom);
     glRotatef(angleX, 1.0f, 0.0f, 0.0f);
     glRotatef(angleY, 0.0f, 1.0f, 0.0f);
 
-    glBegin(GL_QUADS);
-    // Front face
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-    // Back face
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-    // Top face
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    // Bottom face
-    glColor3f(1.0f, 1.0f, 0.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    // Right face
-    glColor3f(1.0f, 0.0f, 1.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
-    glVertex3f(1.0f, 1.0f, -1.0f);
-    glVertex3f(1.0f, 1.0f, 1.0f);
-    glVertex3f(1.0f, -1.0f, 1.0f);
-    // Left face
-    glColor3f(0.0f, 1.0f, 1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, 1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glEnd();
+    // Draw the cube
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glutSolidCube(1.0);
 
     glutSwapBuffers();
 }
@@ -87,6 +58,20 @@ void mouseButton(int button, int state, int x, int y) {
         } else {
             isDragging = 0;
         }
+    } else if (button == GLUT_MIDDLE_BUTTON) {
+        if (state == GLUT_DOWN) {
+            isDragging = 1;
+            lastMouseX = x;
+            lastMouseY = y;
+        } else {
+            isDragging = 0;
+        }
+    } else if (button == 3) { // Scroll up
+        zoom += 0.5f;
+        glutPostRedisplay();
+    } else if (button == 4) { // Scroll down
+        zoom -= 0.5f;
+        glutPostRedisplay();
     }
 }
 
