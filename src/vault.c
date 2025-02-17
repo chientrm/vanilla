@@ -6,6 +6,32 @@ float zoom = -5.0f;
 int lastMouseX, lastMouseY;
 int isDragging = 0;
 
+typedef struct {
+    float vertices[16][3];
+    int edges[24][2];
+} MajorVaultProtein;
+
+MajorVaultProtein mvp = {
+    {
+        { -0.5f, -0.5f, -0.5f }, {  0.5f, -0.5f, -0.5f },
+        {  0.5f,  0.5f, -0.5f }, { -0.5f,  0.5f, -0.5f },
+        { -0.5f, -0.5f,  0.5f }, {  0.5f, -0.5f,  0.5f },
+        {  0.5f,  0.5f,  0.5f }, { -0.5f,  0.5f,  0.5f },
+        { -0.25f, -0.25f, -0.25f }, {  0.25f, -0.25f, -0.25f },
+        {  0.25f,  0.25f, -0.25f }, { -0.25f,  0.25f, -0.25f },
+        { -0.25f, -0.25f,  0.25f }, {  0.25f, -0.25f,  0.25f },
+        {  0.25f,  0.25f,  0.25f }, { -0.25f,  0.25f,  0.25f }
+    },
+    {
+        { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 0 },
+        { 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 4 },
+        { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 },
+        { 8, 9 }, { 9, 10 }, { 10, 11 }, { 11, 8 },
+        { 12, 13 }, { 13, 14 }, { 14, 15 }, { 15, 12 },
+        { 8, 12 }, { 9, 13 }, { 10, 14 }, { 11, 15 }
+    }
+};
+
 void initGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
@@ -15,6 +41,30 @@ void initGL() {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 }
 
+void drawMVP() {
+    glBegin(GL_LINES);
+    for (int i = 0; i < 24; i++) {
+        glVertex3fv(mvp.vertices[mvp.edges[i][0]]);
+        glVertex3fv(mvp.vertices[mvp.edges[i][1]]);
+    }
+    glEnd();
+}
+
+void drawVaultCell() {
+    for (int j = 0; j < 8; j++) {
+        glPushMatrix();
+        glTranslatef(0.0f, j * 0.5f, 0.0f); // Stack rings on top of each other
+        for (int i = 0; i < 360; i += (360 / 39)) {
+            glPushMatrix();
+            glRotatef(i, 0.0f, 1.0f, 0.0f);
+            glTranslatef(1.0f, 0.0f, 0.0f);
+            drawMVP();
+            glPopMatrix();
+        }
+        glPopMatrix();
+    }
+}
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -22,9 +72,9 @@ void display() {
     glRotatef(angleX, 1.0f, 0.0f, 0.0f);
     glRotatef(angleY, 0.0f, 1.0f, 0.0f);
 
-    // Draw the cube
+    // Draw the vault cell composed of Major Vault Proteins
     glColor3f(0.5f, 0.5f, 0.5f);
-    glutSolidCube(1.0);
+    drawVaultCell();
 
     glutSwapBuffers();
 }
